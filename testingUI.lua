@@ -201,6 +201,52 @@ end
 local spawnBtn = createButton(petTabFrame, "SPAWN PET", 0.65)
 local spawnSeedBtn = createButton(seedTabFrame, "SPAWN SEED", 0.45)
 
+-- Pet spawning function
+local function spawnPet()
+    local petName = petNameBox.Text
+    local weight = tonumber(weightBox.Text) or 1
+    local age = tonumber(ageBox.Text) or 1
+    
+    if petName == "" then
+        warn("Please enter a pet name!")
+        return
+    end
+    
+    -- Replace this with your actual pet spawning logic
+    local success, err = pcall(function()
+        -- Example: game:GetService("ReplicatedStorage").PetEvents.SpawnPet:FireServer(petName, weight, age)
+        print(string.format("Spawning pet: %s (Weight: %s, Age: %s)", petName, weight, age))
+    end)
+    
+    if not success then
+        warn("Failed to spawn pet:", err)
+    end
+end
+
+-- Seed spawning function
+local function spawnSeed()
+    local seedName = seedNameBox.Text
+    local amount = tonumber(amountBox.Text) or 1
+    
+    if seedName == "" then
+        warn("Please enter a seed name!")
+        return
+    end
+    
+    -- Replace this with your actual seed spawning logic
+    local success, err = pcall(function()
+        -- Example: game:GetService("ReplicatedStorage").SeedEvents.SpawnSeed:FireServer(seedName, amount)
+        print(string.format("Spawning %s seeds (Amount: %s)", seedName, amount))
+    end)
+    
+    if not success then
+        warn("Failed to spawn seeds:", err)
+    end
+end
+
+spawnBtn.MouseButton1Click:Connect(spawnPet)
+spawnSeedBtn.MouseButton1Click:Connect(spawnSeed)
+
 local function switchToTab(tab)
     if tab == "pet" then
         petTabFrame.Visible = true
