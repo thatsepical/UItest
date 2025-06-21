@@ -1,6 +1,7 @@
 local player = game:GetService("Players").LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local screenGui = Instance.new("ScreenGui", playerGui)
 screenGui.Name = "PetSpawnerUI"
@@ -8,6 +9,41 @@ screenGui.ResetOnSpawn = false
 
 local isPC = UIS.MouseEnabled
 local uiScale = isPC and 1.15 or 1
+
+local function createGlow(frame)
+    local glow = Instance.new("Frame")
+    glow.Name = "Glow"
+    glow.BackgroundTransparency = 1
+    glow.Size = UDim2.new(1, 12, 1, 12)
+    glow.Position = UDim2.new(0, -6, 0, -6)
+    glow.ZIndex = -1
+    
+    local corner = Instance.new("UICorner", glow)
+    corner.CornerRadius = UDim.new(0, 8)
+    
+    local gradient = Instance.new("UIGradient")
+    gradient.Rotation = 90
+    gradient.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.5),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 255))
+    })
+    gradient.Parent = glow
+    
+    glow.Parent = frame
+    
+    local time = 0
+    RunService.Heartbeat:Connect(function(delta)
+        time = time + delta
+        gradient.Offset = Vector2.new(math.cos(time * 2) * 0.5, math.sin(time * 2) * 0.5
+    end)
+    
+    return glow
+end
 
 local toggleButton = Instance.new("TextButton", screenGui)
 toggleButton.Size = UDim2.new(0, 80 * uiScale, 0, 25 * uiScale)
@@ -27,6 +63,8 @@ mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
 mainFrame.Visible = true
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 8)
+
+createGlow(mainFrame)
 
 local dragging, dragInput, dragStart, startPos
 mainFrame.InputBegan:Connect(function(input)
@@ -73,12 +111,13 @@ versionText.TextXAlignment = Enum.TextXAlignment.Left
 
 local title = Instance.new("TextLabel", header)
 title.Text = "PET/SEED SPAWNER"
-title.Size = UDim2.new(1, -50, 0, 20)
-title.Position = UDim2.new(0, 45, 0, 5)
+title.Size = UDim2.new(1, -10, 0, 20)
+title.Position = UDim2.new(0, 5, 0, 5)
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 16
 title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundTransparency = 1
+title.TextXAlignment = Enum.TextXAlignment.Center
 
 local credit = Instance.new("TextLabel", header)
 credit.Text = "by @zenxq"
@@ -88,6 +127,7 @@ credit.Font = Enum.Font.SourceSans
 credit.TextSize = 10
 credit.TextColor3 = Color3.new(0.8, 0.8, 0.8)
 credit.BackgroundTransparency = 1
+credit.TextXAlignment = Enum.TextXAlignment.Center
 
 local tabBackground = Instance.new("Frame", header)
 tabBackground.Size = UDim2.new(1, 0, 0, 20)
