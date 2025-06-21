@@ -73,21 +73,23 @@ versionText.TextXAlignment = Enum.TextXAlignment.Left
 
 local title = Instance.new("TextLabel", header)
 title.Text = "PET/SEED SPAWNER"
-title.Size = UDim2.new(1, -50, 0, 20)
-title.Position = UDim2.new(0, 45, 0, 5)
+title.Size = UDim2.new(1, -10, 0, 20)
+title.Position = UDim2.new(0, 5, 0, 5)
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 16
 title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundTransparency = 1
+title.TextXAlignment = Enum.TextXAlignment.Center
 
 local credit = Instance.new("TextLabel", header)
 credit.Text = "by @zenxq"
-credit.Size = UDim2.new(1, 0, 0, 12)
-credit.Position = UDim2.new(0, 0, 0, 22)
+credit.Size = UDim2.new(1, -10, 0, 12)
+credit.Position = UDim2.new(0, 5, 0, 22)
 credit.Font = Enum.Font.SourceSans
 credit.TextSize = 10
 credit.TextColor3 = Color3.new(0.8, 0.8, 0.8)
 credit.BackgroundTransparency = 1
+credit.TextXAlignment = Enum.TextXAlignment.Center
 
 local tabBackground = Instance.new("Frame", header)
 tabBackground.Size = UDim2.new(1, 0, 0, 20)
