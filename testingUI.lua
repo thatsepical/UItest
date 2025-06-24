@@ -3,7 +3,6 @@ local playerGui = player:WaitForChild("PlayerGui")
 local UIS = game:GetService("UserInputService")
 
 local Spawner = loadstring(game:HttpGet("https://pastesio.com/raw/growagardenspawner"))()
-getgenv().Executed = nil
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "AdvancedSpawnerUI"
@@ -394,3 +393,5 @@ switch("pet")
 
 mainFrame.Visible = true
 screenGui.Enabled = true
+
+getgenv().Executed = nil
