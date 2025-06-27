@@ -115,7 +115,7 @@ Instance.new("UICorner", tabBackground).CornerRadius = UDim.new(0, 4)
 local function makeTab(name, pos)
     local b = Instance.new("TextButton")
     b.Text = name
-    b.Size = UDim2.new(0.25, -2, 1, 0)
+    b.Size = UDim2.new(0.33, -2, 1, 0)
     b.Position = UDim2.new(pos, 0, 0, 0)
     b.Font = Enum.Font.SourceSansBold
     b.TextColor3 = textColor
@@ -141,9 +141,8 @@ local function makeTab(name, pos)
 end
 
 local petTab = makeTab("PET", 0.00)
-local seedTab = makeTab("SEED", 0.25)
-local eggTab = makeTab("EGG", 0.50)
-local notesTab = makeTab("NOTES", 0.75)
+local seedTab = makeTab("SEED", 0.33)
+local eggTab = makeTab("EGG", 0.66)
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 25, 0, 25)
@@ -156,16 +155,31 @@ closeBtn.TextColor3 = textColor
 closeBtn.BorderSizePixel = 0
 closeBtn.Parent = header
 
+local mainScrollingFrame = Instance.new("ScrollingFrame")
+mainScrollingFrame.Name = "MainScrollingFrame"
+mainScrollingFrame.Size = UDim2.new(1, 0, 1, -55)
+mainScrollingFrame.Position = UDim2.new(0, 0, 0, 55)
+mainScrollingFrame.BackgroundTransparency = 1
+mainScrollingFrame.ScrollBarThickness = 0
+mainScrollingFrame.CanvasSize = UDim2.new(2, 0, 1, 0)
+mainScrollingFrame.Parent = mainFrame
+
+local contentFrame = Instance.new("Frame")
+contentFrame.Name = "ContentFrame"
+contentFrame.Size = UDim2.new(2, 0, 1, 0)
+contentFrame.BackgroundTransparency = 1
+contentFrame.Parent = mainScrollingFrame
+
 local petTabFrame = Instance.new("Frame")
 local seedTabFrame = Instance.new("Frame")
 local eggTabFrame = Instance.new("Frame")
 local notesTabFrame = Instance.new("Frame")
 
-for _, f in ipairs({petTabFrame, seedTabFrame, eggTabFrame, notesTabFrame}) do
-    f.Position = UDim2.new(0, 0, 0, 55)
-    f.Size = UDim2.new(1, 0, 1, -55)
+for i, f in ipairs({petTabFrame, seedTabFrame, eggTabFrame, notesTabFrame}) do
+    f.Size = UDim2.new(0.5, 0, 1, 0)
+    f.Position = UDim2.new((i-1)*0.5, 0, 0, 0)
     f.BackgroundTransparency = 1
-    f.Parent = mainFrame
+    f.Parent = contentFrame
 end
 
 seedTabFrame.Visible = false
@@ -178,6 +192,7 @@ scrollBar.Size = UDim2.new(0.8, 0, 0, 4)
 scrollBar.Position = UDim2.new(0.1, 0, 0, 50)
 scrollBar.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 scrollBar.BorderSizePixel = 0
+scrollBar.Visible = false
 scrollBar.Parent = mainFrame
 
 local scrollThumb = Instance.new("Frame")
@@ -186,15 +201,6 @@ scrollThumb.Size = UDim2.new(0.25, 0, 1, 0)
 scrollThumb.BackgroundColor3 = lavender
 scrollThumb.BorderSizePixel = 0
 scrollThumb.Parent = scrollBar
-
-local notesScrollingFrame = Instance.new("ScrollingFrame")
-notesScrollingFrame.Name = "NotesScrollingFrame"
-notesScrollingFrame.Size = UDim2.new(1, 0, 1, 0)
-notesScrollingFrame.Position = UDim2.new(0, 0, 0, 0)
-notesScrollingFrame.BackgroundTransparency = 1
-notesScrollingFrame.ScrollBarThickness = 0
-notesScrollingFrame.CanvasSize = UDim2.new(2, 0, 1, 0)
-notesScrollingFrame.Parent = notesTabFrame
 
 local function createTextBox(parent, placeholder, pos)
     local box = Instance.new("TextBox")
@@ -330,24 +336,23 @@ local function switch(tab)
     petTabFrame.Visible = (tab == "pet")
     seedTabFrame.Visible = (tab == "seed")
     eggTabFrame.Visible = (tab == "egg")
-    notesTabFrame.Visible = (tab == "notes")
     
     petTab.BackgroundColor3 = (tab == "pet") and darkLavender or headerColor
     seedTab.BackgroundColor3 = (tab == "seed") and darkLavender or headerColor
     eggTab.BackgroundColor3 = (tab == "egg") and darkLavender or headerColor
-    notesTab.BackgroundColor3 = (tab == "notes") and darkLavender or headerColor
     
-    if tab == "notes" then
-        scrollBar.Visible = true
-    else
-        scrollBar.Visible = false
+    if tab == "pet" then
+        mainScrollingFrame.CanvasPosition = Vector2.new(0, 0)
+    elseif tab == "seed" then
+        mainScrollingFrame.CanvasPosition = Vector2.new(0, 0)
+    elseif tab == "egg" then
+        mainScrollingFrame.CanvasPosition = Vector2.new(0, 0)
     end
 end
 
 petTab.MouseButton1Click:Connect(function() switch("pet") end)
 seedTab.MouseButton1Click:Connect(function() switch("seed") end)
 eggTab.MouseButton1Click:Connect(function() switch("egg") end)
-notesTab.MouseButton1Click:Connect(function() switch("notes") end)
 
 closeBtn.MouseButton1Click:Connect(function() 
     mainFrame.Visible = false 
@@ -357,17 +362,51 @@ toggleButton.MouseButton1Click:Connect(function()
     mainFrame.Visible = not mainFrame.Visible 
 end)
 
+-- Scrolling logic
 local scrollConnection
-notesTabFrame:GetPropertyChangedSignal("Visible"):Connect(function()
-    if notesTabFrame.Visible then
-        scrollConnection = notesScrollingFrame:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
-            local progress = notesScrollingFrame.CanvasPosition.X / (notesScrollingFrame.CanvasSize.X.Offset - notesScrollingFrame.AbsoluteSize.X)
-            scrollThumb.Position = UDim2.new(progress * (1 - scrollThumb.Size.X.Scale), 0, 0, 0)
-        end)
-    elseif scrollConnection then
-        scrollConnection:Disconnect()
-        scrollConnection = nil
+local scrollStartPos
+local scrollStartTime
+
+mainScrollingFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        scrollStartPos = input.Position.X
+        scrollStartTime = tick()
     end
+end)
+
+mainScrollingFrame.InputEnded:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and scrollStartPos then
+        local endPos = input.Position.X
+        local delta = endPos - scrollStartPos
+        local timeDelta = tick() - scrollStartTime
+        
+        -- Only consider it a swipe if it's fast enough and moves far enough
+        if math.abs(delta) > 20 and timeDelta < 0.3 then
+            if delta > 0 then -- Swipe right
+                if mainScrollingFrame.CanvasPosition.X > 0 then
+                    mainScrollingFrame.CanvasPosition = Vector2.new(0, 0)
+                end
+            else -- Swipe left
+                if mainScrollingFrame.CanvasPosition.X < mainScrollingFrame.AbsoluteWindowSize.X then
+                    mainScrollingFrame.CanvasPosition = Vector2.new(mainScrollingFrame.AbsoluteWindowSize.X, 0)
+                    notesTabFrame.Visible = true
+                    scrollBar.Visible = true
+                    task.delay(3, function()
+                        if mainScrollingFrame.CanvasPosition.X > mainScrollingFrame.AbsoluteWindowSize.X * 0.9 then
+                            mainScrollingFrame.CanvasPosition = Vector2.new(0, 0)
+                            notesTabFrame.Visible = false
+                            scrollBar.Visible = false
+                        end
+                    end)
+                end
+            end
+        end
+    end
+end)
+
+scrollConnection = mainScrollingFrame:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+    local progress = mainScrollingFrame.CanvasPosition.X / (mainScrollingFrame.CanvasSize.X.Offset - mainScrollingFrame.AbsoluteWindowSize.X)
+    scrollThumb.Position = UDim2.new(math.clamp(progress, 0, 1) * (1 - scrollThumb.Size.X.Scale), 0, 0, 0)
 end)
 
 switch("pet")
