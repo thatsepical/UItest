@@ -16,7 +16,6 @@ local darkLavender = Color3.fromRGB(160, 120, 215)
 local headerColor = Color3.fromRGB(47, 49, 54)
 local textColor = Color3.fromRGB(220, 220, 220)
 
--- Toggle Button
 local toggleButton = Instance.new("TextButton")
 toggleButton.Name = "ToggleButton"
 toggleButton.Size = UDim2.new(0, 80*uiScale, 0, 25*uiScale)
@@ -29,7 +28,6 @@ toggleButton.TextColor3 = Color3.new(0,0,0)
 toggleButton.Parent = screenGui
 Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 6)
 
--- Main Frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
 mainFrame.Size = UDim2.new(0, 250*uiScale, 0, 240*uiScale)
@@ -41,7 +39,6 @@ mainFrame.Visible = true
 mainFrame.Parent = screenGui
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 8)
 
--- Dragging functionality
 local dragging, dragStart, startPos
 mainFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -66,7 +63,6 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
--- Header
 local header = Instance.new("Frame")
 header.Name = "Header"
 header.Size = UDim2.new(1, 0, 0, 40)
@@ -108,34 +104,19 @@ credit.BackgroundTransparency = 1
 credit.TextXAlignment = Enum.TextXAlignment.Center
 credit.Parent = header
 
--- Tab Scrolling Container
-local tabScrollingFrame = Instance.new("ScrollingFrame")
-tabScrollingFrame.Name = "TabScroller"
-tabScrollingFrame.Size = UDim2.new(1, 0, 0, 20)
-tabScrollingFrame.Position = UDim2.new(0, 0, 0, 35)
-tabScrollingFrame.BackgroundTransparency = 1
-tabScrollingFrame.ScrollingDirection = Enum.ScrollingDirection.X
-tabScrollingFrame.ScrollBarThickness = 0
-tabScrollingFrame.CanvasSize = UDim2.new(0, 500, 0, 20) -- Will be adjusted later
-tabScrollingFrame.Parent = header
-
 local tabBackground = Instance.new("Frame")
-tabBackground.Size = UDim2.new(0, 500, 1, 0) -- Will be adjusted later
+tabBackground.Size = UDim2.new(1, 0, 0, 20)
+tabBackground.Position = UDim2.new(0, 0, 0, 35)
 tabBackground.BackgroundColor3 = headerColor
 tabBackground.BorderSizePixel = 0
-tabBackground.Parent = tabScrollingFrame
+tabBackground.Parent = header
 Instance.new("UICorner", tabBackground).CornerRadius = UDim.new(0, 4)
-
--- Function to create tabs with horizontal scrolling
-local tabs = {}
-local tabFrames = {}
-local tabWidth = 0.25 -- Each tab takes 25% of visible space (4 tabs total)
 
 local function makeTab(name, pos)
     local b = Instance.new("TextButton")
     b.Text = name
-    b.Size = UDim2.new(tabWidth, -2, 1, 0)
-    b.Position = UDim2.new(pos * tabWidth, 0, 0, 0)
+    b.Size = UDim2.new(0.25, -2, 1, 0)
+    b.Position = UDim2.new(pos, 0, 0, 0)
     b.Font = Enum.Font.SourceSansBold
     b.TextColor3 = textColor
     b.TextSize = 14
@@ -159,18 +140,11 @@ local function makeTab(name, pos)
     return b
 end
 
--- Create all tabs (including the hidden NOTES tab)
-local petTab = makeTab("PET", 0)
-local seedTab = makeTab("SEED", 1)
-local eggTab = makeTab("EGG", 2)
-local notesTab = makeTab("NOTES", 3) -- Hidden tab that requires scrolling
+local petTab = makeTab("PET", 0.00)
+local seedTab = makeTab("SEED", 0.25)
+local eggTab = makeTab("EGG", 0.50)
+local notesTab = makeTab("NOTES", 0.75)
 
--- Adjust canvas size based on number of tabs
-local totalTabWidth = #tabs * (tabWidth * 250) -- 250 is mainFrame width
-tabBackground.Size = UDim2.new(0, totalTabWidth, 1, 0)
-tabScrollingFrame.CanvasSize = UDim2.new(0, totalTabWidth, 0, 20)
-
--- Close Button
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 25, 0, 25)
 closeBtn.Position = UDim2.new(1, -30, 0, 5)
@@ -182,7 +156,6 @@ closeBtn.TextColor3 = textColor
 closeBtn.BorderSizePixel = 0
 closeBtn.Parent = header
 
--- Create all tab frames
 local petTabFrame = Instance.new("Frame")
 local seedTabFrame = Instance.new("Frame")
 local eggTabFrame = Instance.new("Frame")
@@ -199,7 +172,30 @@ seedTabFrame.Visible = false
 eggTabFrame.Visible = false
 notesTabFrame.Visible = false
 
--- Create text input function
+local scrollBar = Instance.new("Frame")
+scrollBar.Name = "ScrollBar"
+scrollBar.Size = UDim2.new(0.8, 0, 0, 4)
+scrollBar.Position = UDim2.new(0.1, 0, 0, 50)
+scrollBar.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+scrollBar.BorderSizePixel = 0
+scrollBar.Parent = mainFrame
+
+local scrollThumb = Instance.new("Frame")
+scrollThumb.Name = "ScrollThumb"
+scrollThumb.Size = UDim2.new(0.25, 0, 1, 0)
+scrollThumb.BackgroundColor3 = lavender
+scrollThumb.BorderSizePixel = 0
+scrollThumb.Parent = scrollBar
+
+local notesScrollingFrame = Instance.new("ScrollingFrame")
+notesScrollingFrame.Name = "NotesScrollingFrame"
+notesScrollingFrame.Size = UDim2.new(1, 0, 1, 0)
+notesScrollingFrame.Position = UDim2.new(0, 0, 0, 0)
+notesScrollingFrame.BackgroundTransparency = 1
+notesScrollingFrame.ScrollBarThickness = 0
+notesScrollingFrame.CanvasSize = UDim2.new(2, 0, 1, 0)
+notesScrollingFrame.Parent = notesTabFrame
+
 local function createTextBox(parent, placeholder, pos)
     local box = Instance.new("TextBox")
     box.Size = UDim2.new(0.9, 0, 0, 25)
@@ -217,7 +213,30 @@ local function createTextBox(parent, placeholder, pos)
     return box
 end
 
--- Create buttons for all tabs
+local petNameBox = createTextBox(petTabFrame, "Pet Name", UDim2.new(0.05, 0, 0.05, 0))
+local weightBox = createTextBox(petTabFrame, "Weight", UDim2.new(0.05, 0, 0.25, 0))
+local ageBox = createTextBox(petTabFrame, "Age", UDim2.new(0.05, 0, 0.45, 0))
+local seedNameBox = createTextBox(seedTabFrame, "Seed Name", UDim2.new(0.05, 0, 0.05, 0))
+local amountBox = createTextBox(seedTabFrame, "Amount", UDim2.new(0.05, 0, 0.25, 0))
+local eggNameBox = createTextBox(eggTabFrame, "Egg Name", UDim2.new(0.05, 0, 0.05, 0))
+local spinBox = createTextBox(eggTabFrame, "Plant to Spin", UDim2.new(0.05, 0, 0.25, 0))
+
+local function validateDecimal(box)
+    box:GetPropertyChangedSignal("Text"):Connect(function()
+        local t = box.Text:gsub("[^%d.]", "")
+        if select(2, t:gsub("%.", "")) > 1 then
+            local p1, p2 = t:match("([^%.]+)%.?(.*)")
+            t = p1.."."..p2
+        end
+        if t:sub(1,1) == "." then t = "0"..t end
+        if t ~= box.Text then box.Text = t end
+    end)
+end
+
+for _, b in ipairs({weightBox, ageBox, amountBox}) do 
+    validateDecimal(b) 
+end
+
 local function createButton(parent, label, posY)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0.9, 0, 0, 25)
@@ -242,16 +261,11 @@ local function createButton(parent, label, posY)
     return btn
 end
 
--- Create elements for NOTES tab
-local notesBox = createTextBox(notesTabFrame, "Enter your notes here...", UDim2.new(0.05, 0, 0.05, 0))
-notesBox.Size = UDim2.new(0.9, 0, 0.7, 0) -- Bigger box for notes
-notesBox.MultiLine = true
-notesBox.TextWrapped = true
+local spawnBtn = createButton(petTabFrame, "SPAWN PET", 0.65)
+local spawnSeedBtn = createButton(seedTabFrame, "SPAWN SEED", 0.45)
+local spawnEggBtn = createButton(eggTabFrame, "SPAWN EGG", 0.45)
+local spinBtn = createButton(eggTabFrame, "SPIN PLANT", 0.65)
 
-local saveNotesBtn = createButton(notesTabFrame, "SAVE NOTES", 0.8)
-local clearNotesBtn = createButton(notesTabFrame, "CLEAR NOTES", 0.9)
-
--- Notification system
 local function showNotification(message)
     local notification = Instance.new("Frame")
     notification.Name = "SpawnNotification"
@@ -296,7 +310,22 @@ local function showNotification(message)
     end)
 end
 
--- Tab switching function
+spawnBtn.MouseButton1Click:Connect(function()
+    showNotification("Pet spawning functionality has been removed")
+end)
+
+spawnSeedBtn.MouseButton1Click:Connect(function()
+    showNotification("Seed spawning functionality has been removed")
+end)
+
+spawnEggBtn.MouseButton1Click:Connect(function()
+    showNotification("Egg spawning functionality has been removed")
+end)
+
+spinBtn.MouseButton1Click:Connect(function()
+    showNotification("Plant spinning functionality has been removed")
+end)
+
 local function switch(tab)
     petTabFrame.Visible = (tab == "pet")
     seedTabFrame.Visible = (tab == "seed")
@@ -308,49 +337,39 @@ local function switch(tab)
     eggTab.BackgroundColor3 = (tab == "egg") and darkLavender or headerColor
     notesTab.BackgroundColor3 = (tab == "notes") and darkLavender or headerColor
     
-    -- Auto-scroll to make the selected tab visible
     if tab == "notes" then
-        tabScrollingFrame.CanvasPosition = Vector2.new(tabBackground.AbsoluteSize.X - tabScrollingFrame.AbsoluteSize.X, 0)
-    elseif tab == "pet" then
-        tabScrollingFrame.CanvasPosition = Vector2.new(0, 0)
+        scrollBar.Visible = true
+    else
+        scrollBar.Visible = false
     end
 end
 
--- Connect tab buttons
 petTab.MouseButton1Click:Connect(function() switch("pet") end)
 seedTab.MouseButton1Click:Connect(function() switch("seed") end)
 eggTab.MouseButton1Click:Connect(function() switch("egg") end)
 notesTab.MouseButton1Click:Connect(function() switch("notes") end)
 
--- Close button
 closeBtn.MouseButton1Click:Connect(function() 
     mainFrame.Visible = false 
 end)
 
--- Toggle button
 toggleButton.MouseButton1Click:Connect(function() 
     mainFrame.Visible = not mainFrame.Visible 
 end)
 
--- NOTES tab functionality
-local notesData = {}
-
-saveNotesBtn.MouseButton1Click:Connect(function()
-    notesData[player.UserId] = notesBox.Text
-    showNotification("Notes saved!")
+local scrollConnection
+notesTabFrame:GetPropertyChangedSignal("Visible"):Connect(function()
+    if notesTabFrame.Visible then
+        scrollConnection = notesScrollingFrame:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+            local progress = notesScrollingFrame.CanvasPosition.X / (notesScrollingFrame.CanvasSize.X.Offset - notesScrollingFrame.AbsoluteSize.X)
+            scrollThumb.Position = UDim2.new(progress * (1 - scrollThumb.Size.X.Scale), 0, 0, 0)
+        end)
+    elseif scrollConnection then
+        scrollConnection:Disconnect()
+        scrollConnection = nil
+    end
 end)
 
-clearNotesBtn.MouseButton1Click:Connect(function()
-    notesBox.Text = ""
-    showNotification("Notes cleared!")
-end)
-
--- Load saved notes when switching to notes tab
-notesTab.MouseButton1Click:Connect(function()
-    notesBox.Text = notesData[player.UserId] or ""
-end)
-
--- Initialize with PET tab
 switch("pet")
 
 mainFrame.Visible = true
