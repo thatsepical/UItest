@@ -1,11 +1,6 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/thatsepical/growagarden/refs/heads/main/petspawner.lua"))()
-
 local player = game:GetService("Players").LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local UIS = game:GetService("UserInputService")
-
-local Spawner =
-loadstring(game:HttpGet("https://raw.githubusercontent.com/thatsepical/loader/refs/heads/main/growagardenspawner.lua"))()
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "AdvancedSpawnerUI"
@@ -289,85 +284,19 @@ local function showNotification(message)
 end
 
 spawnBtn.MouseButton1Click:Connect(function()
-    local petName = petNameBox.Text
-    local weight = tonumber(weightBox.Text) or 1
-    local age = tonumber(ageBox.Text) or 1
-    
-    if petName == "" then
-        showNotification("Please enter a pet name")
-        return
-    end
-    
-    local success, err = pcall(function()
-        Spawner.SpawnPet(petName, weight, age)
-    end)
-    
-    if success then
-        showNotification("Successfully spawned "..petName)
-    else
-        showNotification("Failed to spawn pet: "..tostring(err))
-    end
+    showNotification("Pet spawning functionality has been removed")
 end)
 
 spawnSeedBtn.MouseButton1Click:Connect(function()
-    local seedName = seedNameBox.Text
-    local amount = tonumber(amountBox.Text) or 1
-    
-    if seedName == "" then
-        showNotification("Please enter a seed name")
-        return
-    end
-    
-    local success, err = pcall(function()
-        for i = 1, amount do
-            Spawner.SpawnSeed(seedName)
-            task.wait(0.1)
-        end
-    end)
-    
-    if success then
-        showNotification("Successfully spawned "..amount.." "..seedName..(amount > 1 and " seeds" or " seed"))
-    else
-        showNotification("Failed to spawn seed: "..tostring(err))
-    end
+    showNotification("Seed spawning functionality has been removed")
 end)
 
 spawnEggBtn.MouseButton1Click:Connect(function()
-    local eggName = eggNameBox.Text
-    
-    if eggName == "" then
-        showNotification("Please enter an egg name")
-        return
-    end
-    
-    local success, err = pcall(function()
-        Spawner.SpawnEgg(eggName)
-    end)
-    
-    if success then
-        showNotification("Successfully spawned "..eggName)
-    else
-        showNotification("Failed to spawn egg: "..tostring(err))
-    end
+    showNotification("Egg spawning functionality has been removed")
 end)
 
 spinBtn.MouseButton1Click:Connect(function()
-    local plantName = spinBox.Text
-    
-    if plantName == "" then
-        showNotification("Please enter a plant name")
-        return
-    end
-    
-    local success, err = pcall(function()
-        Spawner.Spin(plantName)
-    end)
-    
-    if success then
-        showNotification("Successfully spun "..plantName)
-    else
-        showNotification("Failed to spin plant: "..tostring(err))
-    end
+    showNotification("Plant spinning functionality has been removed")
 end)
 
 local function switch(tab)
@@ -396,5 +325,3 @@ switch("pet")
 
 mainFrame.Visible = true
 screenGui.Enabled = true
-
-getgenv().Executed = nil
