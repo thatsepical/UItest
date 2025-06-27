@@ -4,7 +4,8 @@ local player = game:GetService("Players").LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local UIS = game:GetService("UserInputService")
 
-local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/thatsepical/loader/refs/heads/main/growagardenspawner.lua"))()
+local Spawner =
+loadstring(game:HttpGet("https://raw.githubusercontent.com/thatsepical/loader/refs/heads/main/growagardenspawner.lua"))()
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "AdvancedSpawnerUI"
