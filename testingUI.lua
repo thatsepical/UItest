@@ -286,15 +286,15 @@ loadstringText.AutomaticSize = Enum.AutomaticSize.Y
 loadstringText.Position = UDim2.new(0, 0, 0, notesText.TextBounds.Y + 10)
 loadstringText.Font = Enum.Font.SourceSans
 loadstringText.TextSize = 14
-loadstringText.TextColor3 = lavender
-loadstringText.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
-loadstringText.BackgroundTransparency = 0.8
+loadstringText.TextColor3 = textColor
+loadstringText.BackgroundColor3 = Color3.fromRGB(70, 70, 75)
+loadstringText.BackgroundTransparency = 0.5
 loadstringText.TextWrapped = true
 loadstringText.TextXAlignment = Enum.TextXAlignment.Left
 loadstringText.TextYAlignment = Enum.TextYAlignment.Top
 loadstringText.Parent = scrollFrame
 Instance.new("UICorner", loadstringText).CornerRadius = UDim.new(0, 4)
-Instance.new("UIStroke", loadstringText).Color = lavender
+Instance.new("UIStroke", loadstringText).Color = Color3.fromRGB(100, 100, 105)
 
 local copyBtn = Instance.new("TextButton")
 copyBtn.Text = "COPY"
@@ -316,7 +316,7 @@ copyBtn.MouseLeave:Connect(function()
 end)
 
 local instructionsText = Instance.new("TextLabel")
-instructionsText.Text = "Copy the script and rejoin\nExecute the script\nMake sure to execute the script with PURPLE UI, for it to work everytime.\nYou need to do these steps for the script with YELLOW UI to work."
+instructionsText.Text = "• Copy the script and rejoin\n• Execute the script\n• Make sure to execute the script with PURPLE UI, for it to work everytime.\n• You need to do these steps for the script with YELLOW UI to work."
 instructionsText.Size = UDim2.new(1, 0, 0, 0)
 instructionsText.AutomaticSize = Enum.AutomaticSize.Y
 instructionsText.Position = UDim2.new(0, 0, 0, copyBtn.Position.Y.Offset + copyBtn.Size.Y.Offset + 10)
